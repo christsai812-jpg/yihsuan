@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>胡志明市初遊 - Travel App</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="西貢漫旅">
-    
+    <title>胡志明市隨身筆記</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -20,485 +15,266 @@
             --text-main: #555E64;
             --text-light: #8E979C;
             --card-bg: #FFFFFF;
-            --danger-red: #E29792;
+            --accent-pink: #D9B8B5;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Zen Maru Gothic', sans-serif;
             background-color: var(--snow-white);
             color: var(--text-main);
-            line-height: 1.6;
             overflow-x: hidden;
         }
 
+        /* 可編輯區域的通用樣式 */
+        [contenteditable="true"] {
+            border-bottom: 1px dashed transparent;
+            transition: 0.3s;
+        }
+        [contenteditable="true"]:focus {
+            border-bottom: 1px dashed var(--morandi-blue);
+            background-color: rgba(147, 169, 181, 0.05);
+        }
+
         header {
-            padding: 50px 25px 15px;
-            background: linear-gradient(180deg, #FFFFFF 0%, rgba(249, 249, 249, 0) 100%);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 60px 25px 20px;
+            background: #fff;
         }
 
-        .trip-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-main);
-            letter-spacing: 1px;
-        }
+        .trip-title { font-size: 24px; font-weight: 700; margin: 0; }
+        .trip-date { font-size: 14px; color: var(--morandi-blue); margin-top: 5px; }
 
-        .trip-date {
-            font-size: 14px;
-            color: var(--morandi-blue);
-            margin-top: 5px;
-            font-weight: 500;
-        }
-
+        /* Tabs */
         .tabs-container {
-            display: flex;
-            padding: 0 25px;
-            gap: 20px;
-            margin-bottom: 20px;
+            display: flex; padding: 0 25px; gap: 20px; margin: 15px 0;
         }
-
         .tab {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-light);
-            cursor: pointer;
-            position: relative;
-            padding-bottom: 8px;
+            font-size: 16px; font-weight: 500; color: var(--text-light);
+            cursor: pointer; position: relative; padding-bottom: 8px;
         }
-
-        .tab.active {
-            color: var(--morandi-blue);
-        }
-
+        .tab.active { color: var(--morandi-blue); }
         .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--morandi-blue);
-            border-radius: 10px;
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%;
+            height: 3px; background-color: var(--morandi-blue); border-radius: 10px;
         }
 
-        .page-content {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-        
-        .page-content.active {
-            display: block;
-        }
+        /* 內容區 */
+        .content-section { padding: 0 15px 120px; display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .content-section {
-            padding: 0 20px 100px;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* 卡片設計 */
         .card {
             background: var(--card-bg);
             border-radius: 24px;
             padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(147, 169, 181, 0.1);
-            border: 1px solid rgba(224, 220, 217, 0.5);
-        }
-
-        .itinerary-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
             position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid rgba(224, 220, 217, 0.4);
         }
 
+        .itinerary-item { display: flex; gap: 15px; position: relative; }
+        
         .time-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 50px;
+            display: flex; flex-direction: column; align-items: center; min-width: 55px;
         }
-
-        .time {
-            font-weight: 700;
-            color: var(--morandi-blue);
-            font-size: 14px;
-            outline: none;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        .time:focus, .spot-title:focus, .spot-desc:focus {
-            background-color: var(--snow-white);
-            border-bottom: 2px solid var(--morandi-blue);
-        }
-
-        .line {
-            width: 2px;
-            flex-grow: 1;
-            background-color: var(--warm-gray);
-            margin: 5px 0;
-        }
-
-        .spot-info {
-            flex-grow: 1;
-        }
-
-        .spot-title {
-            margin: 0;
-            font-size: 16px;
-            color: var(--text-main);
-            outline: none;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .spot-desc {
-            margin: 5px 0 0;
-            font-size: 13px;
-            color: var(--text-light);
-            outline: none;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: var(--danger-red);
-            cursor: pointer;
-            font-size: 14px;
-            padding: 5px;
-            opacity: 0.6;
-        }
+        .time { font-weight: 700; color: var(--morandi-blue); font-size: 14px; }
         
-        .btn-delete:hover {
-            opacity: 1;
+        .spot-info { flex: 1; }
+        .spot-info h3 { margin: 0; font-size: 16px; }
+        .spot-info p { margin: 5px 0 0; font-size: 13px; color: var(--text-light); }
+
+        /* 功能按鈕 */
+        .card-actions {
+            position: absolute; top: 15px; right: 15px; display: flex; gap: 10px;
+        }
+        .btn-icon {
+            background: none; border: none; font-size: 16px; cursor: pointer;
+            color: var(--warm-gray); transition: 0.3s;
+        }
+        .btn-icon.active { color: var(--accent-pink); }
+        .btn-delete { color: #eee; font-size: 14px; }
+        .btn-delete:hover { color: #ff9999; }
+
+        /* 浮動新增按鈕 */
+        .fab {
+            position: fixed; bottom: 100px; right: 25px;
+            width: 56px; height: 56px;
+            background: var(--morandi-blue);
+            color: white; border-radius: 28px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(147, 169, 181, 0.4);
+            z-index: 999; border: none; font-size: 24px;
         }
 
-        .btn-add-item {
-            width: 100%;
-            background: transparent;
-            border: 2px dashed var(--morandi-blue);
-            color: var(--morandi-blue);
-            padding: 12px;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            transition: 0.2s;
-        }
-
-        .btn-add-item:active {
-            background: rgba(147, 169, 181, 0.1);
-        }
-
-        .guide-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--snow-white);
-            border-radius: 50px;
-            font-size: 12px;
-            color: var(--morandi-blue);
-            margin-right: 8px;
-            margin-bottom: 8px;
-            border: 1px solid var(--warm-gray);
-        }
-
+        /* 底部導覽 */
         .bottom-nav {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            height: 65px;
-            border-radius: 35px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            z-index: 1000;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 65px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-radius: 35px; display: flex; justify-content: space-around;
+            align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000;
         }
+        .nav-item { text-align: center; color: var(--text-light); text-decoration: none; font-size: 10px; }
+        .nav-item.active { color: var(--morandi-blue); }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
 
-        .nav-item {
-            text-align: center;
-            color: var(--text-light);
-            text-decoration: none;
-            flex: 1;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: var(--morandi-blue);
-        }
-
-        .nav-item i {
-            font-size: 20px;
-            display: block;
-        }
-
-        .nav-item span {
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .weather-widget {
-            text-align: center;
-            padding: 30px 0;
-        }
-
-        .temp {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--morandi-blue);
-        }
-        
-        .map-placeholder {
-            height: 300px;
-            background: #eaeaea;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            border: 2px dashed var(--warm-gray);
-            margin-top: 15px;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="page-explore" class="page-content active">
-        <header>
-            <h1 class="trip-title" contenteditable="true" onblur="saveItinerary()">胡志明市初遊</h1>
-            <div class="trip-date" contenteditable="true" onblur="saveItinerary()">2024.11.20 - 11.24 · 5 Days</div>
-        </header>
+    <header>
+        <h1 class="trip-title" contenteditable="true" id="app-title">胡志明市初遊</h1>
+        <div class="trip-date" contenteditable="true" id="app-date">2024.11.20 - 11.24</div>
+    </header>
 
-        <div class="tabs-container">
-            <div class="tab active" onclick="switchTab(event, 'itinerary')">行程</div>
-            <div class="tab" onclick="switchTab(event, 'guide')">指南</div>
-            <div class="tab" onclick="switchTab(event, 'weather')">天氣</div>
-        </div>
+    <div class="tabs-container">
+        <div class="tab active" onclick="switchTab('itinerary')">行程</div>
+        <div class="tab" onclick="switchTab('guide')">收藏/筆記</div>
+        <div class="tab" onclick="switchTab('weather')">天氣</div>
+    </div>
 
-        <div id="itinerary" class="content-section active">
-            <div class="card" id="itinerary-list">
-                </div>
-            
-            <button class="btn-add-item" onclick="addItineraryItem()">
-                <i class="fas fa-plus"></i> 新增景點行程
-            </button>
-            
-            <div class="card" style="border-left: 4px solid var(--morandi-blue); margin-top: 20px;">
-                <h3>💡 小提醒</h3>
-                <p style="font-size: 14px; margin: 0;">點擊上方任何標題、時間、內容，都可以直接打字修改喔！修改後會自動儲存。</p>
-            </div>
-        </div>
-
-        <div id="guide" class="content-section">
-            <div class="card">
-                <h3>📍 行前準備</h3>
-                <div class="guide-tags">
-                    <span class="guide-tag">越南簽證</span>
-                    <span class="guide-tag">Grab App</span>
-                    <span class="guide-tag">Google Map 離線</span>
-                    <span class="guide-tag">萬用插頭</span>
-                </div>
-            </div>
-            <div class="card">
-                <h3>🍜 必吃清單</h3>
-                <p>1. Phở Hòa Pasteur (河粉)<br>2. Bánh Mì Huỳnh Hoa (法國麵包)<br>3. Highland Coffee (連鎖咖啡)</p>
-            </div>
-        </div>
-
-        <div id="weather" class="content-section">
-            <div class="card weather-widget">
-                <i class="fas fa-cloud-sun" style="font-size: 50px; color: #FFD27D;"></i>
-                <div class="temp">31°C</div>
-                <p>胡志明市 · 多雲轉晴</p>
-                <p style="font-size: 13px; color: var(--text-light);">降雨機率：20% | 濕度：75%</p>
-            </div>
+    <!-- 行程內容區 -->
+    <div id="itinerary" class="content-section active">
+        <div id="itinerary-list">
+            <!-- 資料會由 JS 動態生成 -->
         </div>
     </div>
 
-    <div id="page-map" class="page-content" style="padding: 60px 20px;">
+    <!-- 收藏/筆記內容區 -->
+    <div id="guide" class="content-section">
         <div class="card">
-            <h3>🗺️ 景點地圖分佈</h3>
-            <div class="map-placeholder">
-                <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i> 地圖模組載入中...
-            </div>
+            <h3>📌 旅遊備忘錄</h3>
+            <p contenteditable="true" id="app-notes">點擊這裡開始輸入你的筆記、清單或是交通提醒...</p>
         </div>
     </div>
 
-    <div id="page-favorites" class="page-content" style="padding: 60px 20px;">
-        <div class="card">
-            <h3>❤️ 我的收藏景點</h3>
-            <p style="color: var(--text-light);">目前尚未收藏任何景點。</p>
+    <!-- 天氣內容區 -->
+    <div id="weather" class="content-section">
+        <div class="card" style="text-align:center; padding: 40px 0;">
+            <i class="fas fa-sun" style="font-size: 48px; color: #FFD27D;"></i>
+            <h2 style="font-size: 32px; margin: 10px 0;">31°C</h2>
+            <p>胡志明市 · 晴朗</p>
         </div>
     </div>
 
-    <div id="page-profile" class="page-content" style="padding: 60px 20px;">
-        <div class="card" style="text-align: center;">
-            <i class="fas fa-user-circle" style="font-size: 60px; color: var(--morandi-blue); margin-bottom: 10px;"></i>
-            <h3>旅行者帳戶</h3>
-            <button onclick="clearStorage()" style="background:var(--danger-red); border:none; color:white; padding:8px 15px; border-radius:10px; font-family:inherit; cursor:pointer; margin-top:10px;">
-                重設所有行程資料
-            </button>
-        </div>
-    </div>
+    <button class="fab" onclick="addNewItem()"><i class="fas fa-plus"></i></button>
 
     <nav class="bottom-nav">
-        <a class="nav-item" onclick="switchPage(event, 'page-map')">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>地圖</span>
-        </a>
-        <a class="nav-item active" onclick="switchPage(event, 'page-explore')">
-            <i class="fas fa-camera-retro"></i>
-            <span>景點</span>
-        </a>
-        <a class="nav-item" onclick="switchPage(event, 'page-favorites')">
-            <i class="fas fa-heart"></i>
-            <span>收藏</span>
-        </a>
-        <a class="nav-item" onclick="switchPage(event, 'page-profile')">
-            <i class="fas fa-user-circle"></i>
-            <span>我的</span>
-        </a>
+        <a href="#" class="nav-item active"><i class="fas fa-calendar-alt"></i><span>計畫</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-map-marker-alt"></i><span>地圖</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-user"></i><span>我的</span></a>
     </nav>
 
     <script>
-        // 預設行程資料
-        const defaultItinerary = [
-            { time: "09:00", title: "新山一機場抵達", desc: "領取 SIM 卡、更換越南盾" },
-            { time: "11:30", title: "咖啡公寓 (The Cafe Apartments)", desc: "挑選一間文青咖啡館午餐，享受西貢午後" },
-            { time: "15:00", title: "胡志明市中心郵局", desc: "法式殖民風格建築，寄出一張明信片" }
+        // 初始化資料 (若本地沒資料則顯示預設值)
+        let itineraryData = JSON.parse(localStorage.getItem('myItinerary')) || [
+            { id: 1, time: "09:00", title: "抵達機場", desc: "換錢、辦卡", fav: false },
+            { id: 2, time: "12:00", title: "咖啡公寓", desc: "4樓精品咖啡", fav: true }
         ];
 
-        // 初始化：從本地儲存讀取資料，如果沒有就用預設的
-        let itineraryData = JSON.parse(localStorage.getItem('my_itinerary')) || defaultItinerary;
-
+        // 渲染行程
         function renderItinerary() {
-            const listContainer = document.getElementById('itinerary-list');
-            listContainer.innerHTML = '';
-
-            if(itineraryData.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; color:var(--text-light);">目前沒有行程，請點擊下方按鈕新增！</p>';
-                return;
-            }
-
+            const list = document.getElementById('itinerary-list');
+            list.innerHTML = '';
+            
             itineraryData.forEach((item, index) => {
-                const itemHtml = `
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="btn-icon ${item.fav ? 'active' : ''}" onclick="toggleFav(${index})">
+                            <i class="fa${item.fav ? 's' : 'r'} fa-heart"></i>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deleteItem(${index})">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
                     <div class="itinerary-item">
                         <div class="time-node">
                             <span class="time" contenteditable="true" onblur="updateData(${index}, 'time', this.innerText)">${item.time}</span>
-                            <div class="line"></div>
+                            <div style="width:2px; height:30px; background:#eee; margin:5px 0;"></div>
                         </div>
                         <div class="spot-info">
-                            <h3 class="spot-title" contenteditable="true" onblur="updateData(${index}, 'title', this.innerText)">${item.title}</h3>
-                            <p class="spot-desc" contenteditable="true" onblur="updateData(${index}, 'desc', this.innerText)">${item.desc}</p>
+                            <h3 contenteditable="true" onblur="updateData(${index}, 'title', this.innerText)">${item.title}</h3>
+                            <p contenteditable="true" onblur="updateData(${index}, 'desc', this.innerText)">${item.desc}</p>
                         </div>
-                        <button class="btn-delete" onclick="deleteItem(${index})"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
-                listContainer.insertAdjacentHTML('beforeend', itemHtml);
+                list.appendChild(card);
             });
+            saveToLocal();
         }
 
-        // 更新特定欄位資料並存檔
-        function updateData(index, field, value) {
-            itineraryData[index][field] = value.trim();
-            localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
+        // 切換頁籤
+        function switchTab(tabId) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
         }
 
         // 新增行程
-        function addItineraryItem() {
-            itineraryData.push({ time: "12:00", title: "新行程景點", desc: "請點擊文字直接修改內容" });
-            localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
+        function addNewItem() {
+            const newItem = {
+                id: Date.now(),
+                time: "12:00",
+                title: "新景點名稱",
+                desc: "點擊此處編輯內容",
+                fav: false
+            };
+            itineraryData.push(newItem);
             renderItinerary();
-            triggerHaptic();
         }
 
         // 刪除行程
         function deleteItem(index) {
-            if(confirm("確定要刪除這個行程嗎？")) {
+            if(confirm('確定要刪除這個行程嗎？')) {
                 itineraryData.splice(index, 1);
-                localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
                 renderItinerary();
-                triggerHaptic();
             }
         }
 
-        // 儲存標題和日期
-        function saveItinerary() {
-            const title = document.querySelector('.trip-title').innerText;
-            const date = document.querySelector('.trip-date').innerText;
-            localStorage.setItem('my_trip_title', title);
-            localStorage.setItem('my_trip_date', date);
+        // 切換收藏
+        function toggleFav(index) {
+            itineraryData[index].fav = !itineraryData[index].fav;
+            renderItinerary();
         }
 
-        // 載入標題和日期
-        function loadTripInfo() {
-            if(localStorage.getItem('my_trip_title')) {
-                document.querySelector('.trip-title').innerText = localStorage.getItem('my_trip_title');
-            }
-            if(localStorage.getItem('my_trip_date')) {
-                document.querySelector('.trip-date').innerText = localStorage.getItem('my_trip_date');
-            }
+        // 更新資料
+        function updateData(index, key, value) {
+            itineraryData[index][key] = value;
+            saveToLocal();
         }
 
-        // 清除所有紀錄重設
-        function clearStorage() {
-            if(confirm("確定要清除所有修改，還原成最初的預設行程嗎？")) {
-                localStorage.clear();
-                location.reload();
-            }
+        // 儲存至 LocalStorage
+        function saveToLocal() {
+            localStorage.setItem('myItinerary', JSON.stringify(itineraryData));
+            localStorage.setItem('appTitle', document.getElementById('app-title').innerText);
+            localStorage.setItem('appDate', document.getElementById('app-date').innerText);
+            localStorage.setItem('appNotes', document.getElementById('app-notes').innerText);
         }
 
-        // 輕微震動
-        function triggerHaptic() {
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate(10);
-            }
+        // 讀取標題等額外資訊
+        function loadExtraInfo() {
+            if(localStorage.getItem('appTitle')) document.getElementById('app-title').innerText = localStorage.getItem('appTitle');
+            if(localStorage.getItem('appDate')) document.getElementById('app-date').innerText = localStorage.getItem('appDate');
+            if(localStorage.getItem('appNotes')) document.getElementById('app-notes').innerText = localStorage.getItem('appNotes');
         }
 
-        // 基礎分頁切換邏輯
-        function switchTab(event, tabId) {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+        // 監聽標題與筆記的儲存
+        document.getElementById('app-title').addEventListener('blur', saveToLocal);
+        document.getElementById('app-date').addEventListener('blur', saveToLocal);
+        document.getElementById('app-notes').addEventListener('blur', saveToLocal);
 
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => section.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            triggerHaptic();
-        }
-
-        function switchPage(event, pageId) {
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.
+        // 啟動 App
+        window.onload = () => {
+            loadExtraInfo();
+            renderItinerary();
+        };
+    </script>
+</body>
+</html>

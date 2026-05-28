@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>胡志明市初遊 - Travel Designer</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="西貢漫旅">
+    
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,6 +24,7 @@
             --tag-eat: #E9C6C1;
             --tag-buy: #D0D9C5;
             --tag-photo: #F3E2C3;
+            --danger-red: #E29792;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -58,7 +64,11 @@
         }
         .m-tab.active { color: var(--morandi-blue); border-bottom-color: var(--morandi-blue); font-weight: 700; }
 
-        /* Day Selector (每日選擇切換) */
+        /* 主分頁容器 */
+        .page-wrapper { display: none; }
+        .page-wrapper.active { display: block; }
+
+        /* Day Selector */
         .day-scroller {
             display: flex; gap: 12px; padding: 10px 25px;
             overflow-x: auto; scrollbar-width: none;
@@ -78,13 +88,12 @@
         .day-card-btn b { font-size: 18px; }
 
         /* Content Area */
-        .content-section { padding: 0 18px 120px; display: none; }
-        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
+        .content-section { padding: 0 18px 140px; }
 
-        /* 每日資訊 Header (日期+地點) */
-        .day-info-header { padding: 15px 10px; }
+        /* 每日資訊 Header */
+        .day-info-header { padding: 15px 10px; position: relative;}
         .day-info-header h2 { margin: 0; font-size: 20px; color: var(--text-main); }
-        .day-location { font-size: 13px; color: var(--morandi-blue); margin-top: 4px; }
+        .day-location { font-size: 13px; color: var(--morandi-blue); margin-top: 4px; display: inline-block; }
 
         /* 景點卡片 */
         .spot-card {
@@ -109,6 +118,7 @@
             background: var(--snow-white); color: var(--morandi-blue);
             display: flex; align-items: center; justify-content: center;
             text-decoration: none; border: 1px solid var(--warm-gray);
+            z-index: 2;
         }
 
         /* 彩色標籤 */
@@ -118,7 +128,7 @@
         .c-buy { background: var(--tag-buy); color: #5D6B50; }
         .c-photo { background: var(--tag-photo); color: #8D7A55; }
 
-        /* 資訊區塊 (停車/技巧) */
+        /* 資訊區塊 */
         .info-block {
             margin-top: 15px; padding: 12px; border-radius: 15px; font-size: 13px; line-height: 1.5;
         }
@@ -134,7 +144,15 @@
             color: var(--text-light); flex-direction: column; cursor: pointer;
         }
 
-        /* 建議穿著與天氣提示 (每日底部) */
+        /* 刪除卡片按鈕視覺優化 */
+        .card-delete-icon {
+            position: absolute; bottom: 20px; right: 20px; 
+            color: var(--text-light); opacity: 0.4; font-size: 16px; 
+            cursor: pointer; padding: 5px; z-index: 5;
+        }
+        .card-delete-icon:hover { opacity: 1; color: var(--danger-red); }
+
+        /* 建議穿著與天氣提示 */
         .daily-advice {
             background: linear-gradient(135deg, #fff 0%, var(--snow-white) 100%);
             border-radius: 26px; padding: 20px; margin-top: 10px;
@@ -148,19 +166,27 @@
         .bottom-nav {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 400px; height: 68px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
             border-radius: 35px; display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); z-index: 1000;
             border: 1px solid rgba(255,255,255,0.5);
         }
-        .nav-item { color: var(--text-light); font-size: 22px; transition: 0.3s; }
+        .nav-item { color: var(--text-light); font-size: 22px; transition: 0.3s; cursor: pointer; }
         .nav-item.active { color: var(--morandi-blue); transform: translateY(-3px); }
 
+        /* 右下角懸浮按鈕 */
         .add-spot-btn {
             position: fixed; bottom: 110px; right: 25px;
             width: 54px; height: 54px; background: var(--morandi-blue);
             color: white; border-radius: 50%; border: none; font-size: 22px;
             box-shadow: 0 5px 15px rgba(147, 169, 181, 0.4); z-index: 99;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        .map-placeholder {
+            height: 300px; background: #eaeaea; border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-light); border: 2px dashed var(--warm-gray); margin-top: 15px;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -174,27 +200,23 @@
     </header>
 
     <div class="main-tabs">
-        <div class="m-tab active" onclick="switchMainTab('itinerary')">行程</div>
-        <div class="m-tab" onclick="switchMainTab('guide')">指南</div>
-        <div class="m-tab" onclick="switchMainTab('weather')">天氣</div>
+        <div class="m-tab active" id="tab-itinerary" onclick="switchMainTab('itinerary')">行程</div>
+        <div class="m-tab" id="tab-guide" onclick="switchMainTab('guide')">指南</div>
+        <div class="m-tab" id="tab-weather" onclick="switchMainTab('weather')">天氣</div>
     </div>
 
-    <!-- 行程頁面 -->
-    <div id="itinerary" class="content-section active">
-        <!-- 每日選擇切換 -->
+    <div id="page-itinerary" class="page-wrapper active">
         <div class="day-scroller" id="day-scroller"></div>
 
-        <div id="day-content-area">
+        <div id="day-content-area" class="content-section">
             <div class="day-info-header">
                 <h2 id="day-date-display" contenteditable="true">11月20日 (週三)</h2>
-                <div class="day-location" contenteditable="true"><i class="fas fa-map-marker-alt"></i> 第一郡 · 核心歷史區</div>
+                <div class="day-location" contenteditable="true" id="day-loc-display">第一郡 · 核心歷史區</div>
             </div>
 
             <div id="spot-list">
-                <!-- 景點卡片動態載入 -->
-            </div>
+                </div>
 
-            <!-- 建議穿著與天氣提示 -->
             <div class="daily-advice">
                 <div class="advice-box">
                     <h4><i class="fas fa-tshirt"></i> 建議穿著</h4>
@@ -208,19 +230,57 @@
         </div>
     </div>
 
-    <!-- 底部浮動導覽條 -->
+    <div id="page-map" class="page-wrapper">
+        <div class="content-section" style="padding-top: 20px;">
+            <div class="spot-card">
+                <h3>🗺️ 智慧探索地圖</h3>
+                <p style="color:var(--text-light); font-size:14px;">已自動為您匯入第一郡與第三郡核心景點。點擊景點卡片的導航鈕即可開啟即時路線規劃。</p>
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i> 地圖模組已就緒
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-guide" class="page-wrapper">
+        <div class="content-section" style="padding-top: 20px;">
+            <div class="spot-card">
+                <h3>📍 西貢通關密語</h3>
+                <div class="badge-row">
+                    <span class="c-badge c-eat">換匯：濱城市場周邊金店</span>
+                    <span class="c-badge c-buy">網路：新山一機場 4G 卡</span>
+                    <span class="c-badge c-photo">叫車：一律使用 Grab</span>
+                </div>
+                <p style="font-size:14px; margin-top:15px;"><b>防坑指南：</b>路邊發椰子的大叔請勿合照，計程車切勿搭乘路邊排班不明車輛。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-profile" class="page-wrapper">
+        <div class="content-section" style="padding-top: 20px;">
+            <div class="spot-card" style="text-align: center; padding: 40px 20px;">
+                <i class="fas fa-user-circle" style="font-size: 60px; color: var(--morandi-blue); margin-bottom: 10px;"></i>
+                <h3>智能行囊管理員</h3>
+                <p style="font-size: 13px; color: var(--text-light); margin-bottom:20px;">所有修改皆即時離線同步於本機瀏覽器</p>
+                <button onclick="resetAllData()" style="background:var(--danger-red); border:none; color:white; padding:10px 20px; border-radius:15px; font-family:inherit; cursor:pointer; font-weight:700;">
+                    還原至預設西貢行程
+                </button>
+            </div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><i class="fas fa-calendar-day"></i></a>
-        <a href="#" class="nav-item"><i class="fas fa-utensils"></i></a>
-        <a href="#" class="nav-item"><i class="fas fa-camera-retro"></i></a>
-        <a href="#" class="nav-item"><i class="fas fa-user-circle"></i></a>
+        <a class="nav-item active" id="nav-itinerary" onclick="switchBottomPage('itinerary')"><i class="fas fa-calendar-day"></i></a>
+        <a class="nav-item" id="nav-map" onclick="switchBottomPage('map')"><i class="fas fa-map-marked-alt"></i></a>
+        <a class="nav-item" id="nav-guide" onclick="switchBottomPage('guide')"><i class="fas fa-passport"></i></a>
+        <a class="nav-item" id="nav-profile" onclick="switchBottomPage('profile')"><i class="fas fa-user-circle"></i></a>
     </nav>
 
-    <button class="add-spot-btn" onclick="addNewSpot()"><i class="fas fa-plus"></i></button>
+    <button class="add-spot-btn" id="floating-add-btn" onclick="addNewSpot()"><i class="fas fa-plus"></i></button>
 
     <script>
-        // 初始化資料結構
-        let travelData = JSON.parse(localStorage.getItem('hcm_trip_data')) || {
+        // 初始化預設資料
+        const defaultData = {
             currentDayIdx: 0,
             days: [
                 {
@@ -243,4 +303,55 @@
                             name: "Phở Hòa Pasteur",
                             desc: "胡志明市最具代表性的百年河粉老店。",
                             tags: ["#必吃牛雜河粉", "#必吃油條"],
-                            tips: "河粉上
+                            tips: "河粉上桌後，先喝一口原味湯頭再加檸檬。",
+                            parking: "店門口可直接停機車。",
+                            img: ""
+                        }
+                    ]
+                },
+                {
+                    dateLabel: "11月21日 (週四)",
+                    location: "第三郡 · 文青咖啡區",
+                    outfit: "適合拍照的休閒洋裝",
+                    weatherTip: "晴朗偏熱，防曬必備",
+                    spots: [
+                        {
+                            cat: "文青",
+                            name: "咖啡公寓 (The Cafe Apartments)",
+                            desc: "整棟九層老公寓全都是特色文青咖啡館與買手店。",
+                            tags: ["#文青必去", "#晚上亮燈超美"],
+                            tips: "搭電梯上樓需付小額費用，走樓梯上去則免費。",
+                            parking: "周邊街道設有劃線機車格。",
+                            img: ""
+                        }
+                    ]
+                }
+            ]
+        };
+
+        let travelData = JSON.parse(localStorage.getItem('hcm_trip_data')) || defaultData;
+
+        function init() {
+            document.getElementById('app-title').innerText = localStorage.getItem('hcm_app_title') || "胡志明市初遊";
+            document.getElementById('app-date').innerText = localStorage.getItem('hcm_app_date') || "2024.11.20 - 11.24 · 5 Days";
+            renderDayScroller();
+            renderCurrentDay();
+        }
+
+        // 頂部的主要 Tabs 切換
+        function switchMainTab(type) {
+            // 切換按鈕亮燈
+            document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+            if(type === 'itinerary') {
+                document.getElementById('tab-itinerary').classList.add('active');
+                switchBottomPage('itinerary');
+            } else if (type === 'guide') {
+                document.getElementById('tab-guide').classList.add('active');
+                switchBottomPage('guide');
+            } else {
+                // 天氣直接導向 profile 設定頁提供重設
+                switchBottomPage('profile');
+            }
+        }
+
+        //

@@ -273,3 +273,56 @@
                 container.appendChild(box);
             });
             const addBtn = document.createElement('div');
+            addBtn.className = 'add-day-btn';
+            addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+            addBtn.onclick = () => { travelData.days.push({ dNum: `D${travelData.days.length+1}`, spots: [] }); renderDaySelector(); saveToCloud(); };
+            container.appendChild(addBtn);
+        }
+
+        function switchFullPage(mode) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            if(mode === 'plan') {
+                document.getElementById('itinerary-page').classList.add('active');
+                document.getElementById('nav-plan').classList.add('active');
+                document.getElementById('itinerary-tabs').style.display = 'flex';
+            } else if(mode === 'map') {
+                document.getElementById('map-page').classList.add('active');
+                document.getElementById('nav-map').classList.add('active');
+                document.getElementById('itinerary-tabs').style.display = 'none';
+            } else if(mode === 'fav') {
+                document.getElementById('fav-page').classList.add('active');
+                document.getElementById('nav-fav').classList.add('active');
+                document.getElementById('itinerary-tabs').style.display = 'none';
+                renderFavList();
+            }
+        }
+
+        function switchSubTab(tab) {
+            document.querySelectorAll('#itinerary-page, #guide-page, #weather-page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}-page`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function renderFavList() {
+            const container = document.getElementById('fav-list');
+            container.innerHTML = '';
+            travelData.days.forEach((day, dIdx) => {
+                day.spots.forEach((spot, sIdx) => {
+                    if(spot.isFav) container.appendChild(createCard(spot, dIdx, sIdx));
+                });
+            });
+        }
+
+        function renderCurrentPage() {
+            if(document.getElementById('itinerary-page').classList.contains('active')) renderItinerary();
+            if(document.getElementById('fav-page').classList.contains('active')) renderFavList();
+        }
+
+        function saveLocal() { localStorage.setItem('hcm_cloud_data', JSON.stringify(travelData)); }
+
+        init();
+    </script>
+</body>
+</html>

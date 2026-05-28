@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>胡志明市初遊 - Travel Designer</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="西貢漫旅">
-    
+    <title>胡志明市初遊 - 行程管家</title>
+    <!-- 引入字體與圖示 -->
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -20,11 +16,9 @@
             --text-main: #555E64;
             --text-light: #8E979C;
             --card-bg: #FFFFFF;
-            /* 彩色標籤配色 */
             --tag-eat: #E9C6C1;
             --tag-buy: #D0D9C5;
             --tag-photo: #F3E2C3;
-            --danger-red: #E29792;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -35,323 +29,116 @@
             background-color: var(--snow-white);
             color: var(--text-main);
             background-image: radial-gradient(var(--warm-gray) 0.5px, transparent 0.5px);
-            background-size: 30px 30px;
-            overflow-x: hidden;
+            background-size: 25px 25px;
         }
 
+        /* 可編輯文字提示 */
         [contenteditable="true"]:focus {
             background-color: rgba(147, 169, 181, 0.08);
-            border-radius: 8px;
+            border-radius: 4px;
         }
 
-        /* Header */
+        /* 固定 Header */
         header {
             padding: 50px 25px 15px;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 100;
+            position: sticky; top: 0; z-index: 1000;
         }
-        .trip-title { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: 1px; }
-        .trip-date { font-size: 14px; color: var(--morandi-blue); margin-top: 4px; }
+        .trip-title { font-size: 24px; font-weight: 700; margin: 0; }
+        .trip-date { font-size: 14px; color: var(--morandi-blue); margin-top: 5px; }
 
-        /* Main Tabs */
+        /* 分頁 Tabs */
         .main-tabs {
-            display: flex; padding: 0 25px; gap: 20px; margin: 15px 0;
+            display: flex; padding: 10px 25px; gap: 25px; 
+            background: #fff; border-bottom: 1px solid var(--warm-gray);
         }
         .m-tab { 
-            font-size: 16px; color: var(--text-light); cursor: pointer; padding-bottom: 5px; 
-            transition: 0.3s; border-bottom: 2px solid transparent;
+            font-size: 16px; color: var(--text-light); cursor: pointer; 
+            padding-bottom: 8px; position: relative; font-weight: 500;
         }
-        .m-tab.active { color: var(--morandi-blue); border-bottom-color: var(--morandi-blue); font-weight: 700; }
-
-        /* 主分頁容器 */
-        .page-wrapper { display: none; }
-        .page-wrapper.active { display: block; }
-
-        /* Day Selector */
-        .day-scroller {
-            display: flex; gap: 12px; padding: 10px 25px;
-            overflow-x: auto; scrollbar-width: none;
+        .m-tab.active { color: var(--morandi-blue); font-weight: 700; }
+        .m-tab.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
+            background: var(--morandi-blue); border-radius: 10px;
         }
-        .day-scroller::-webkit-scrollbar { display: none; }
-        .day-card-btn {
-            min-width: 65px; height: 75px; border-radius: 22px;
-            background: var(--card-bg); border: 1px solid var(--warm-gray);
+
+        /* 內容容器 */
+        .content-section { display: none; padding: 15px 15px 120px; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        /* 天數選擇器 - 固定在行程頁頂部 */
+        .day-switcher {
+            display: flex; gap: 12px; overflow-x: auto; 
+            padding: 10px 10px 20px; scrollbar-width: none;
+        }
+        .day-switcher::-webkit-scrollbar { display: none; }
+        .day-btn {
+            min-width: 60px; height: 65px; border-radius: 20px;
+            background: #fff; border: 1px solid var(--warm-gray);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; flex-shrink: 0;
+            cursor: pointer; flex-shrink: 0; z-index: 10;
         }
-        .day-card-btn.active {
+        .day-btn.active {
             background: var(--morandi-blue); color: white; border-color: var(--morandi-blue);
-            box-shadow: 0 6px 15px rgba(147, 169, 181, 0.3);
+            box-shadow: 0 4px 12px rgba(147, 169, 181, 0.4);
         }
-        .day-card-btn span { font-size: 10px; text-transform: uppercase; margin-bottom: 2px; }
-        .day-card-btn b { font-size: 18px; }
+        .day-btn span { font-size: 10px; }
+        .day-btn b { font-size: 18px; }
 
-        /* Content Area */
-        .content-section { padding: 0 18px 140px; }
-
-        /* 每日資訊 Header */
-        .day-info-header { padding: 15px 10px; position: relative;}
-        .day-info-header h2 { margin: 0; font-size: 20px; color: var(--text-main); }
-        .day-location { font-size: 13px; color: var(--morandi-blue); margin-top: 4px; display: inline-block; }
-
-        /* 景點卡片 */
+        /* 景點卡片樣式 */
         .spot-card {
             background: var(--card-bg); border-radius: 28px;
-            padding: 22px; margin-bottom: 18px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
-            border: 1px solid rgba(224, 220, 217, 0.4);
+            padding: 20px; margin-bottom: 15px;
+            border: 1px solid rgba(224, 220, 217, 0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             position: relative;
         }
 
-        /* 景點分類徽章 */
         .spot-cat {
             display: inline-block; padding: 3px 12px; border-radius: 10px;
-            font-size: 11px; background: var(--morandi-blue); color: white;
-            margin-bottom: 12px; font-weight: 500;
+            font-size: 11px; background: var(--morandi-blue); color: white; margin-bottom: 10px;
         }
 
-        /* 導航按鈕 */
-        .btn-nav {
-            position: absolute; top: 22px; right: 22px;
-            width: 42px; height: 42px; border-radius: 50%;
+        /* 導航按鈕 - 確保 z-index 高於編輯區 */
+        .nav-trigger {
+            position: absolute; top: 20px; right: 20px;
+            width: 45px; height: 45px; border-radius: 50%;
             background: var(--snow-white); color: var(--morandi-blue);
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none; border: 1px solid var(--warm-gray);
-            z-index: 2;
+            border: 1px solid var(--warm-gray); z-index: 50; cursor: pointer;
         }
 
-        /* 彩色標籤 */
-        .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
-        .c-badge { padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; }
+        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+        .c-tag { padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; cursor: pointer; }
         .c-eat { background: var(--tag-eat); color: #8A5A55; }
         .c-buy { background: var(--tag-buy); color: #5D6B50; }
         .c-photo { background: var(--tag-photo); color: #8D7A55; }
 
-        /* 資訊區塊 */
-        .info-block {
-            margin-top: 15px; padding: 12px; border-radius: 15px; font-size: 13px; line-height: 1.5;
-        }
-        .block-tips { background: #FFF9F0; color: #8D7A55; border: 1px solid #F3E2C3; }
-        .block-parking { background: #F5F7F8; color: var(--text-light); border: 1px solid var(--warm-gray); }
+        /* 提示區塊 */
+        .info-box { margin-top: 15px; padding: 12px; border-radius: 15px; font-size: 13px; line-height: 1.6; }
+        .box-tips { background: #FFF9F0; color: #8D7A55; border: 1px solid #F3E2C3; }
+        .box-parking { background: #F5F7F8; color: var(--text-light); border: 1px solid var(--warm-gray); }
 
-        /* 照片上傳旅記 */
-        .journal-photo {
-            width: 100%; height: 160px; border-radius: 20px;
-            background: #F2F2F2; border: 1.5px dashed var(--warm-gray);
-            margin-top: 15px; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; background-size: cover; background-position: center;
-            color: var(--text-light); flex-direction: column; cursor: pointer;
+        /* 底部建議區 */
+        .daily-summary {
+            background: #fff; border-radius: 26px; padding: 20px; margin-top: 20px;
+            border: 1px solid var(--warm-gray); display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
         }
+        .sum-item h4 { margin: 0 0 5px; font-size: 12px; color: var(--morandi-blue); }
+        .sum-item p { margin: 0; font-size: 12px; }
 
-        /* 刪除卡片按鈕視覺優化 */
-        .card-delete-icon {
-            position: absolute; bottom: 20px; right: 20px; 
-            color: var(--text-light); opacity: 0.4; font-size: 16px; 
-            cursor: pointer; padding: 5px; z-index: 5;
-        }
-        .card-delete-icon:hover { opacity: 1; color: var(--danger-red); }
-
-        /* 建議穿著與天氣提示 */
-        .daily-advice {
-            background: linear-gradient(135deg, #fff 0%, var(--snow-white) 100%);
-            border-radius: 26px; padding: 20px; margin-top: 10px;
-            border: 1px solid var(--warm-gray); display: flex; gap: 15px;
-        }
-        .advice-box { flex: 1; }
-        .advice-box h4 { margin: 0 0 5px; font-size: 12px; color: var(--morandi-blue); text-transform: uppercase; }
-        .advice-box p { margin: 0; font-size: 13px; color: var(--text-main); }
-
-        /* 底部浮動導覽條 */
+        /* 底部導覽列 */
         .bottom-nav {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 68px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+            width: 90%; max-width: 400px; height: 65px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             border-radius: 35px; display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); z-index: 1000;
-            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 2000;
         }
-        .nav-item { color: var(--text-light); font-size: 22px; transition: 0.3s; cursor: pointer; }
-        .nav-item.active { color: var(--morandi-blue); transform: translateY(-3px); }
+        .nav-item { color: var(--text-light); font-size: 22px; cursor: pointer; border: none; background: none; }
+        .nav-item.active { color: var(--morandi-blue); }
 
-        /* 右下角懸浮按鈕 */
-        .add-spot-btn {
-            position: fixed; bottom: 110px; right: 25px;
-            width: 54px; height: 54px; background: var(--morandi-blue);
-            color: white; border-radius: 50%; border: none; font-size: 22px;
-            box-shadow: 0 5px 15px rgba(147, 169, 181, 0.4); z-index: 99;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-
-        .map-placeholder {
-            height: 300px; background: #eaeaea; border-radius: 24px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-light); border: 2px dashed var(--warm-gray); margin-top: 15px;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1 class="trip-title" contenteditable="true" id="app-title">胡志明市初遊</h1>
-        <div class="trip-date" contenteditable="true" id="app-date">2024.11.20 - 11.24 · 5 Days</div>
-    </header>
-
-    <div class="main-tabs">
-        <div class="m-tab active" id="tab-itinerary" onclick="switchMainTab('itinerary')">行程</div>
-        <div class="m-tab" id="tab-guide" onclick="switchMainTab('guide')">指南</div>
-        <div class="m-tab" id="tab-weather" onclick="switchMainTab('weather')">天氣</div>
-    </div>
-
-    <div id="page-itinerary" class="page-wrapper active">
-        <div class="day-scroller" id="day-scroller"></div>
-
-        <div id="day-content-area" class="content-section">
-            <div class="day-info-header">
-                <h2 id="day-date-display" contenteditable="true">11月20日 (週三)</h2>
-                <div class="day-location" contenteditable="true" id="day-loc-display">第一郡 · 核心歷史區</div>
-            </div>
-
-            <div id="spot-list">
-                </div>
-
-            <div class="daily-advice">
-                <div class="advice-box">
-                    <h4><i class="fas fa-tshirt"></i> 建議穿著</h4>
-                    <p id="edit-outfit" contenteditable="true">輕便棉麻、短袖、好走球鞋</p>
-                </div>
-                <div class="advice-box">
-                    <h4><i class="fas fa-cloud-sun"></i> 天氣提示</h4>
-                    <p id="edit-weather-tip" contenteditable="true">氣溫 31°C，午後可能有短暫雷雨</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-map" class="page-wrapper">
-        <div class="content-section" style="padding-top: 20px;">
-            <div class="spot-card">
-                <h3>🗺️ 智慧探索地圖</h3>
-                <p style="color:var(--text-light); font-size:14px;">已自動為您匯入第一郡與第三郡核心景點。點擊景點卡片的導航鈕即可開啟即時路線規劃。</p>
-                <div class="map-placeholder">
-                    <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i> 地圖模組已就緒
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-guide" class="page-wrapper">
-        <div class="content-section" style="padding-top: 20px;">
-            <div class="spot-card">
-                <h3>📍 西貢通關密語</h3>
-                <div class="badge-row">
-                    <span class="c-badge c-eat">換匯：濱城市場周邊金店</span>
-                    <span class="c-badge c-buy">網路：新山一機場 4G 卡</span>
-                    <span class="c-badge c-photo">叫車：一律使用 Grab</span>
-                </div>
-                <p style="font-size:14px; margin-top:15px;"><b>防坑指南：</b>路邊發椰子的大叔請勿合照，計程車切勿搭乘路邊排班不明車輛。</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-profile" class="page-wrapper">
-        <div class="content-section" style="padding-top: 20px;">
-            <div class="spot-card" style="text-align: center; padding: 40px 20px;">
-                <i class="fas fa-user-circle" style="font-size: 60px; color: var(--morandi-blue); margin-bottom: 10px;"></i>
-                <h3>智能行囊管理員</h3>
-                <p style="font-size: 13px; color: var(--text-light); margin-bottom:20px;">所有修改皆即時離線同步於本機瀏覽器</p>
-                <button onclick="resetAllData()" style="background:var(--danger-red); border:none; color:white; padding:10px 20px; border-radius:15px; font-family:inherit; cursor:pointer; font-weight:700;">
-                    還原至預設西貢行程
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <a class="nav-item active" id="nav-itinerary" onclick="switchBottomPage('itinerary')"><i class="fas fa-calendar-day"></i></a>
-        <a class="nav-item" id="nav-map" onclick="switchBottomPage('map')"><i class="fas fa-map-marked-alt"></i></a>
-        <a class="nav-item" id="nav-guide" onclick="switchBottomPage('guide')"><i class="fas fa-passport"></i></a>
-        <a class="nav-item" id="nav-profile" onclick="switchBottomPage('profile')"><i class="fas fa-user-circle"></i></a>
-    </nav>
-
-    <button class="add-spot-btn" id="floating-add-btn" onclick="addNewSpot()"><i class="fas fa-plus"></i></button>
-
-    <script>
-        // 初始化預設資料
-        const defaultData = {
-            currentDayIdx: 0,
-            days: [
-                {
-                    dateLabel: "11月20日 (週三)",
-                    location: "第一郡 · 核心歷史區",
-                    outfit: "輕便棉麻、好走球鞋",
-                    weatherTip: "氣溫 31°C，午後可能有雷雨",
-                    spots: [
-                        {
-                            cat: "景點",
-                            name: "胡志明市中央郵局",
-                            desc: "由艾菲爾鐵塔設計師設計，法式殖民建築經典。",
-                            tags: ["#必拍黃牆", "#必買明信片"],
-                            tips: "建議在下午三點進入大廳，陽光灑進拱形窗戶最美。",
-                            parking: "門口有機車停管處，約 5,000 VND。",
-                            img: ""
-                        },
-                        {
-                            cat: "食物",
-                            name: "Phở Hòa Pasteur",
-                            desc: "胡志明市最具代表性的百年河粉老店。",
-                            tags: ["#必吃牛雜河粉", "#必吃油條"],
-                            tips: "河粉上桌後，先喝一口原味湯頭再加檸檬。",
-                            parking: "店門口可直接停機車。",
-                            img: ""
-                        }
-                    ]
-                },
-                {
-                    dateLabel: "11月21日 (週四)",
-                    location: "第三郡 · 文青咖啡區",
-                    outfit: "適合拍照的休閒洋裝",
-                    weatherTip: "晴朗偏熱，防曬必備",
-                    spots: [
-                        {
-                            cat: "文青",
-                            name: "咖啡公寓 (The Cafe Apartments)",
-                            desc: "整棟九層老公寓全都是特色文青咖啡館與買手店。",
-                            tags: ["#文青必去", "#晚上亮燈超美"],
-                            tips: "搭電梯上樓需付小額費用，走樓梯上去則免費。",
-                            parking: "周邊街道設有劃線機車格。",
-                            img: ""
-                        }
-                    ]
-                }
-            ]
-        };
-
-        let travelData = JSON.parse(localStorage.getItem('hcm_trip_data')) || defaultData;
-
-        function init() {
-            document.getElementById('app-title').innerText = localStorage.getItem('hcm_app_title') || "胡志明市初遊";
-            document.getElementById('app-date').innerText = localStorage.getItem('hcm_app_date') || "2024.11.20 - 11.24 · 5 Days";
-            renderDayScroller();
-            renderCurrentDay();
-        }
-
-        // 頂部的主要 Tabs 切換
-        function switchMainTab(type) {
-            // 切換按鈕亮燈
-            document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
-            if(type === 'itinerary') {
-                document.getElementById('tab-itinerary').classList.add('active');
-                switchBottomPage('itinerary');
-            } else if (type === 'guide') {
-                document.getElementById('tab-guide').classList.add('active');
-                switchBottomPage('guide');
-            } else {
-                // 天氣直接導向 profile 設定頁提供重設
-                switchBottomPage('profile');
-            }
-        }
-
-        //
+        /* 新增按鈕 */
+        .add-btn {
+            position: fixed; bottom:

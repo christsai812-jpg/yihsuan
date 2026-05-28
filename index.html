@@ -123,4 +123,375 @@
         }
         .cat-select {
             width: 100%; border: 1px solid var(--warm-gray); border-radius: 6px;
-            font-size: 12px; padding:
+            font-size: 12px; padding: 2px; color: var(--morandi-blue);
+            background: white; font-family: inherit; text-align: center;
+        }
+
+        .info-box-main { flex: 1; }
+        .spot-title { margin: 0 0 6px; font-size: 16px; font-weight: 700; line-height: 1.3;}
+        .spot-desc { font-size: 13px; color: var(--text-light); margin: 0 0 10px; line-height: 1.4; }
+
+        .action-group { display: flex; flex-direction: column; gap: 8px; }
+        .icon-btn {
+            width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--warm-gray);
+            background: white; color: var(--morandi-blue); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn.delete { color: var(--text-light); }
+        .icon-btn.delete:hover { color: var(--danger-red); border-color: var(--danger-red); background: #FFF5F5; }
+
+        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+        .c-tag { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; max-width: 80px;}
+        .c-eat { background: var(--tag-eat); color: #8A5A55; }
+        .c-buy { background: var(--tag-buy); color: #5D6B50; }
+        .c-photo { background: var(--tag-photo); color: #8D7A55; }
+
+        .tips-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; background: #FAFAFA; padding: 10px; border-radius: 10px;}
+        .tip-item { font-size: 12px; display: flex; gap: 6px; align-items: flex-start; line-height: 1.5; color: var(--text-main); }
+        .tip-photo-icon { color: #D4A373; margin-top: 2px; }
+        .tip-park-icon { color: #8E979C; margin-top: 2px; }
+
+        .upload-section { margin-top: 12px; border-top: 1px dashed var(--warm-gray); padding-top: 12px; }
+        .upload-btn-label {
+            display: inline-block; font-size: 12px; color: var(--morandi-blue);
+            background: #F0F4F5; padding: 6px 12px; border-radius: 12px; cursor: pointer; font-weight: 500;
+        }
+        .upload-btn-label input { display: none; }
+        .preview-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; }
+
+        .daily-summary {
+            background: #fff; border-radius: 16px; padding: 16px; margin-top: 20px;
+            border: 1px dashed var(--timeline-color); text-align: left;
+        }
+        .sum-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+        .sum-row:last-child { margin-bottom: 0; }
+        .sum-row i { color: var(--morandi-blue); width: 20px; text-align: center; }
+        .sum-row span { font-size: 13px; font-weight: 700; color: var(--text-main); width: 65px; }
+        .sum-row p { margin: 0; font-size: 13px; color: var(--text-light); flex: 1; }
+
+        .add-text-btn {
+            color: var(--morandi-blue); font-weight: 700; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            margin: 20px 0 10px 10px; padding: 10px 0;
+        }
+
+        /* ================= 底部導覽列 ================= */
+        .bottom-nav {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 380px; height: 64px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-radius: 32px; display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 999;
+            border: 1px solid rgba(224, 220, 217, 0.5);
+        }
+        .nav-item { 
+            color: var(--text-light); font-size: 20px; cursor: pointer; 
+            border: none; background: none; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .nav-item * { pointer-events: none; }
+        .nav-item.active { color: var(--morandi-blue); transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="trip-title" contenteditable="true" id="app-title">胡志明市八日遊</h1>
+        <div class="trip-date" contenteditable="true" id="app-date">2024.11.20 - 11.27</div>
+        
+        <div class="main-tabs">
+            <div id="tab-itinerary-btn" class="m-tab active" onclick="switchTab('itinerary')">行程</div>
+            <div id="tab-guide-btn" class="m-tab" onclick="switchTab('guide')">指南</div>
+            <div id="tab-weather-btn" class="m-tab" onclick="switchTab('weather')">天氣</div>
+        </div>
+    </header>
+
+    <div id="itinerary" class="content-section active">
+        <div class="day-switcher" id="day-switcher"></div>
+
+        <div class="daily-info-card">
+            <div class="daily-info-left">
+                <h2 id="current-date-title" contenteditable="true">11/20 (一)</h2>
+                <p id="current-day-label" contenteditable="true">歷史區探索</p>
+            </div>
+            <div class="daily-info-right">
+                <span class="weather"><i class="fas fa-cloud-sun"></i> <span id="current-day-temp" contenteditable="true">30°C</span></span>
+                <span class="loc" id="current-day-loc" contenteditable="true"><i class="fas fa-map-marker-alt"></i> 第一郡</span>
+            </div>
+        </div>
+
+        <div class="timeline-container" id="spot-list">
+            </div>
+
+        <div class="add-text-btn" onclick="addNewSpot()">
+            <i class="fas fa-plus-circle"></i> 新增行程
+        </div>
+
+        <div class="daily-summary">
+            <div class="sum-row">
+                <i class="fas fa-tshirt"></i> <span>建議穿著</span>
+                <p id="sum-outfit" contenteditable="true">棉麻短袖、好走球鞋</p>
+            </div>
+            <div class="sum-row">
+                <i class="fas fa-umbrella"></i> <span>天氣提示</span>
+                <p id="sum-weather" contenteditable="true">午後短暫陣雨</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="guide" class="content-section">
+        <div class="spot-card" style="margin-top: 10px;">
+            <h3 contenteditable="true" id="guide-title" style="margin: 0 0 12px 0; font-size: 18px;">📌 行前備忘錄</h3>
+            <div contenteditable="true" id="guide-content" style="font-size: 14px; line-height: 1.8; color: var(--text-main);">
+                1. E-visa 電子簽證務必列印紙本兩份備用。<br>
+                2. 手機提前下載 Grab 並綁定好海外信用卡。<br>
+                3. 換匯推薦：濱城市場對面的金店換匯匯率最佳。<br>
+                4. 腸胃藥與防蚊液隨身攜帶。
+            </div>
+        </div>
+    </div>
+
+    <div id="weather" class="content-section">
+        <div class="spot-card" style="padding: 50px 20px; text-align: center; margin-top: 10px;">
+            <i class="fas fa-sun" style="font-size: 56px; color: #E5B96B; margin-bottom: 15px;"></i>
+            <h2 style="font-size: 36px; margin: 0 0 5px 0;">32°C</h2>
+            <p style="margin: 0; color: var(--text-light); font-size: 14px;">胡志明市 · 晴朗炎熱</p>
+            <hr style="border: 0; border-top: 1px dashed var(--warm-gray); margin: 20px 0;">
+            <p style="font-size: 13px; line-height: 1.6; text-align: left; color: var(--text-main);">
+                💡 <b>溫馨提醒：</b><br>
+                南越地區全年皆夏，目前正值乾季，氣候炎熱，外出請注意防曬並隨時補充水分。
+            </p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button id="nav-itinerary-btn" class="nav-item active" onclick="switchTab('itinerary')"><i class="fas fa-calendar-alt"></i></button>
+        <button id="nav-guide-btn" class="nav-item" onclick="switchTab('guide')"><i class="fas fa-book-open"></i></button>
+        <button id="nav-weather-btn" class="nav-item" onclick="switchTab('weather')"><i class="fas fa-cloud"></i></button>
+    </nav>
+
+    <script>
+        // 設定選單類別
+        const categories = ["食物", "活動", "購物", "景點", "住宿", "交通"];
+
+        // 核心資料庫 (擴充至 8 天，並更改 storage key 以確保載入新資料)
+        let travelData = JSON.parse(localStorage.getItem('hcm_combined_v7')) || {
+            currentDay: 0,
+            days: [
+                {
+                    dateStr: "11/20", dayOfWeek: "一", label: "歷史區探索", temp: "30°C", loc: "第一郡", outfit: "棉麻短袖、好走球鞋", weather: "午後短暫陣雨，記得帶傘",
+                    spots: [
+                        { time: "10:00", cat: "景點", name: "胡志明市中央郵局", desc: "法式建築，記得寄張明信片給自己。", tags: ["#必拍", "#歷史地標"], tips: "門口黃色拱門與大鐘必拍。", parking: "正門禁止停車，請停至隔壁街區。", imgData: "" },
+                        { time: "12:30", cat: "食物", name: "Phở Hòa Pasteur", desc: "在地知名牛肉粉，湯頭鮮甜。", tags: ["#必吃", "#美食"], tips: "記得加點油條沾湯吃最道地。", parking: "門口有機車代客泊車服務。", imgData: "" }
+                    ]
+                },
+                { dateStr: "11/21", dayOfWeek: "二", label: "文青咖啡日", temp: "32°C", loc: "第三郡", outfit: "輕便洋裝", weather: "晴朗炎熱", spots: [] },
+                { dateStr: "11/22", dayOfWeek: "三", label: "採買伴手禮", temp: "31°C", loc: "濱城市場", outfit: "好穿脫涼鞋", weather: "酷熱高溫", spots: [] },
+                { dateStr: "11/23", dayOfWeek: "四", label: "粉紅教堂巡禮", temp: "31°C", loc: "第三郡", outfit: "淺色系衣物", weather: "多雲時晴", spots: [
+                    { time: "09:30", cat: "景點", name: "新定教堂 (粉紅教堂)", desc: "夢幻粉紅色外觀，少女心爆發。", tags: ["#必拍", "#網美打卡"], tips: "早上光線最好，建議穿白色衣服來拍。", parking: "對面咖啡廳前可停機車。", imgData: "" }
+                ] },
+                { dateStr: "11/24", dayOfWeek: "五", label: "湄公河一日遊", temp: "33°C", loc: "美托", outfit: "防曬薄長袖、帽子", weather: "炎熱高溫", spots: [] },
+                { dateStr: "11/25", dayOfWeek: "六", label: "古芝地道探險", temp: "32°C", loc: "古芝縣", outfit: "排汗運動服裝", weather: "晴時多雲", spots: [] },
+                { dateStr: "11/26", dayOfWeek: "日", label: "越式洗頭與按摩", temp: "30°C", loc: "第一郡", outfit: "寬鬆舒適衣物", weather: "舒適", spots: [
+                    { time: "14:00", cat: "活動", name: "Miu Miu Spa", desc: "熱門按摩店，手法超讚。", tags: ["#必去", "#放鬆"], tips: "務必提前在官網預約，現場容易客滿。", parking: "無特別提示", imgData: "" }
+                ] },
+                { dateStr: "11/27", dayOfWeek: "一", label: "最後衝刺與機場", temp: "31°C", loc: "新山一機場", outfit: "薄外套防機艙冷氣", weather: "晴朗", spots: [] }
+            ]
+        };
+
+        // 初始化加載
+        window.onload = function() {
+            document.getElementById('app-title').innerText = localStorage.getItem('hcm_app_title_v7') || "胡志明市八日遊";
+            document.getElementById('app-date').innerText = localStorage.getItem('hcm_app_date_v7') || "2024.11.20 - 11.27";
+            if(document.getElementById('guide-title')) document.getElementById('guide-title').innerText = localStorage.getItem('hcm_guide_t_v7') || "📌 行前備忘錄";
+            if(document.getElementById('guide-content')) document.getElementById('guide-content').innerHTML = localStorage.getItem('hcm_guide_c_v7') || "1. E-visa 電子簽證務必列印紙本兩份備用。<br>2. 手機提前下載 Grab 並綁定好海外信用卡。<br>3. 換匯推薦：濱城市場對面的金店換匯匯率最佳。";
+            
+            renderDaySwitcher();
+            renderContent();
+        };
+
+        // 切換三大分頁
+        function switchTab(tabId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.m-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            if(document.getElementById(`tab-${tabId}-btn`)) document.getElementById(`tab-${tabId}-btn`).classList.add('active');
+            if(document.getElementById(`nav-${tabId}-btn`)) document.getElementById(`nav-${tabId}-btn`).classList.add('active');
+        }
+
+        // 渲染日期切換列
+        function renderDaySwitcher() {
+            const container = document.getElementById('day-switcher');
+            container.innerHTML = '';
+            travelData.days.forEach((day, idx) => {
+                const btn = document.createElement('div');
+                btn.className = `day-btn ${travelData.currentDay === idx ? 'active' : ''}`;
+                btn.innerHTML = `<span>${day.dateStr}</span><b>D${idx + 1}</b>`;
+                btn.onclick = () => { travelData.currentDay = idx; renderDaySwitcher(); renderContent(); };
+                container.appendChild(btn);
+            });
+        }
+
+        // 渲染行程內容
+        function renderContent() {
+            const day = travelData.days[travelData.currentDay];
+            
+            // 更新每日面板
+            document.getElementById('current-date-title').innerText = `${day.dateStr} (${day.dayOfWeek})`;
+            document.getElementById('current-day-label').innerText = day.label;
+            document.getElementById('current-day-temp').innerText = day.temp || "30°C";
+            document.getElementById('current-day-loc').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${day.loc}`;
+            document.getElementById('sum-outfit').innerText = day.outfit;
+            document.getElementById('sum-weather').innerText = day.weather;
+
+            const list = document.getElementById('spot-list');
+            list.innerHTML = '';
+
+            if(!day.spots || day.spots.length === 0) {
+                list.innerHTML = `<p style="font-size:13px; color:var(--text-light); margin:30px 0; letter-spacing: 1px;">今天尚未安排行程，<br>點擊下方新增按鈕開始規劃吧！</p>`;
+            } else {
+                day.spots.forEach((spot, sIdx) => {
+                    const card = document.createElement('div');
+                    card.className = 'spot-card';
+                    
+                    // 下拉選單處理
+                    let catOptions = categories.map(c => `<option value="${c}" ${spot.cat === c ? 'selected' : ''}>${c}</option>`).join('');
+
+                    // 智慧標籤顏色分配
+                    let tagsHtml = (spot.tags || []).map((tag, tIdx) => {
+                        let colorClass = 'c-photo';
+                        if (tag.includes('吃') || tag.includes('食')) colorClass = 'c-eat';
+                        if (tag.includes('買') || tag.includes('購')) colorClass = 'c-buy';
+                        return `<input class="c-tag ${colorClass}" value="${tag}" onblur="updateTag(${sIdx}, ${tIdx}, this.value)">`;
+                    }).join('');
+
+                    card.innerHTML = `
+                        <div class="card-top">
+                            <div class="time-cat-box">
+                                <input type="time" class="time-input" value="${spot.time}" onblur="updateSpot(${sIdx}, 'time', this.value)">
+                                <select class="cat-select" onchange="updateSpot(${sIdx}, 'cat', this.value)">
+                                    ${catOptions}
+                                </select>
+                            </div>
+                            
+                            <div class="info-box-main">
+                                <h3 class="spot-title" contenteditable="true" onblur="updateSpot(${sIdx}, 'name', this.innerText)">${spot.name}</h3>
+                                <p class="spot-desc" contenteditable="true" onblur="updateSpot(${sIdx}, 'desc', this.innerText)">${spot.desc}</p>
+                                <div class="tag-row">${tagsHtml}</div>
+                            </div>
+
+                            <div class="action-group">
+                                <button class="icon-btn" onclick="goMap('${spot.name}')" title="Google地圖導航"><i class="fas fa-location-arrow"></i></button>
+                                <button class="icon-btn delete" onclick="deleteSpot(${sIdx})" title="刪除此景點"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <i class="fas fa-camera tip-photo-icon"></i>
+                                <span><b>拍照技巧：</b><span contenteditable="true" onblur="updateSpot(${sIdx}, 'tips', this.innerText)">${spot.tips}</span></span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-parking tip-park-icon"></i>
+                                <span><b>停車資訊：</b><span contenteditable="true" onblur="updateSpot(${sIdx}, 'parking', this.innerText)">${spot.parking}</span></span>
+                            </div>
+                        </div>
+
+                        <div class="upload-section">
+                            <label class="upload-btn-label">
+                                <i class="fas fa-image"></i> 新增旅記照片
+                                <input type="file" accept="image/*" onchange="handleImageUpload(event, ${sIdx})">
+                            </label>
+                            <img src="${spot.imgData || ''}" class="preview-img" style="display: ${spot.imgData ? 'block' : 'none'};">
+                            ${spot.imgData ? `<div style="text-align:right; margin-top:8px;"><button onclick="removeImage(${sIdx})" style="background:none; border:none; color:var(--danger-red); font-size:12px; cursor:pointer; font-weight:700;"><i class="fas fa-times-circle"></i> 移除照片</button></div>` : ''}
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            }
+            saveData();
+        }
+
+        // 照片上傳轉 Base64
+        function handleImageUpload(event, sIdx) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    travelData.days[travelData.currentDay].spots[sIdx].imgData = e.target.result;
+                    saveData(); renderContent();
+                } catch (err) {
+                    alert("⚠️ 圖片檔案過大，瀏覽器暫存空間不足！請使用較小的圖片或壓縮後上傳。");
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 移除照片
+        function removeImage(sIdx) {
+            travelData.days[travelData.currentDay].spots[sIdx].imgData = "";
+            saveData(); renderContent();
+        }
+
+        // Google Maps 導航
+        function goMap(name) {
+            if(name === "輸入行程名稱...") return alert("請先輸入名稱再導航喔！");
+            window.open("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name), '_blank');
+        }
+
+        // 更新資料
+        function updateSpot(sIdx, key, val) { travelData.days[travelData.currentDay].spots[sIdx][key] = val; saveData(); }
+        function updateTag(sIdx, tIdx, val) { travelData.days[travelData.currentDay].spots[sIdx].tags[tIdx] = val; saveData(); }
+
+        // 新增景點卡片
+        function addNewSpot() {
+            travelData.days[travelData.currentDay].spots.push({
+                time: "14:00", cat: "景點", name: "輸入行程名稱...", desc: "在這裡記錄點評或介紹...", 
+                tags: ["#打卡"], tips: "無特別提示", parking: "無特別提示", imgData: ""
+            });
+            renderContent();
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // 刪除景點卡片
+        function deleteSpot(sIdx) {
+            if(confirm("確定要刪除此行程卡片嗎？")) {
+                travelData.days[travelData.currentDay].spots.splice(sIdx, 1);
+                renderContent();
+            }
+        }
+
+        // 全域資料儲存
+        function saveData() {
+            localStorage.setItem('hcm_combined_v7', JSON.stringify(travelData));
+            localStorage.setItem('hcm_app_title_v7', document.getElementById('app-title').innerText);
+            localStorage.setItem('hcm_app_date_v7', document.getElementById('app-date').innerText);
+            if(document.getElementById('guide-title')) localStorage.setItem('hcm_guide_t_v7', document.getElementById('guide-title').innerText);
+            if(document.getElementById('guide-content')) localStorage.setItem('hcm_guide_c_v7', document.getElementById('guide-content').innerHTML);
+        }
+
+        // 監聽總結與標題欄位失焦自動存檔
+        ['current-date-title', 'current-day-label', 'current-day-loc', 'current-day-temp', 'sum-outfit', 'sum-weather', 'app-title', 'app-date'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.onblur = function() {
+                const day = travelData.days[travelData.currentDay];
+                if(id === 'current-date-title') { 
+                    let parts = this.innerText.split('(');
+                    if(parts.length > 1) { day.dateStr = parts[0].trim(); day.dayOfWeek = parts[1].replace(')','').trim(); }
+                    renderDaySwitcher(); 
+                }
+                if(id === 'current-day-label') day.label = this.innerText;
+                if(id === 'current-day-loc') day.loc = this.innerText.replace('', '').trim();
+                if(id === 'current-day-temp') day.temp = this.innerText;
+                if(id === 'sum-outfit') day.outfit = this.innerText;
+                if(id === 'sum-weather') day.weather = this.innerText;
+                saveData();
+            };
+        });
+    </script>
+</body>
+</html>

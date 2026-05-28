@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>胡志明市初遊 - Travel Designer</title>
-    <!-- 引入日式圓體字與圖示 -->
+    <title>胡志明市初遊 - 共享編輯版</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -16,112 +15,67 @@
             --text-main: #555E64;
             --text-light: #8E979C;
             --card-bg: #FFFFFF;
-            --accent-beige: #D9D2C5; /* 截圖中的米色背景 */
-            --tag-eat: #E9C6C1;
-            --tag-photo: #F3E2C3;
+            --accent-beige: #D9D2C5;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: var(--snow-white);
-            color: var(--text-main);
-            background-image: radial-gradient(var(--warm-gray) 0.5px, transparent 0.5px);
-            background-size: 25px 25px;
-        }
+        body { margin: 0; padding: 0; font-family: 'Zen Maru Gothic', sans-serif; background-color: var(--snow-white); color: var(--text-main); }
 
-        /* 可編輯文字點擊感 */
-        [contenteditable="true"]:focus { background-color: rgba(147, 169, 181, 0.08); border-radius: 4px; }
-
-        /* Header 與分頁 */
+        /* Header 樣式優化，加入共享按鈕 */
         header {
-            padding: 50px 25px 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 1000;
+            padding: 50px 25px 0; background: #fff; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
-        .trip-title { font-size: 24px; font-weight: 700; margin: 0; }
-        .trip-date { font-size: 14px; color: var(--morandi-blue); margin-top: 5px; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .share-btns { display: flex; gap: 15px; margin-top: 5px; }
+        .btn-tool { 
+            background: #F0F4F5; border: none; border-radius: 10px; width: 35px; height: 35px; 
+            color: var(--morandi-blue); cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
 
-        .main-tabs { display: flex; gap: 25px; margin-top: 20px; border-bottom: 1px solid #eee; }
-        .m-tab { 
-            font-size: 18px; color: var(--text-light); cursor: pointer; 
-            padding-bottom: 12px; position: relative; font-weight: 500;
-        }
+        .main-tabs { display: flex; gap: 25px; margin-top: 15px; border-bottom: 1px solid #eee; }
+        .m-tab { font-size: 16px; color: var(--text-light); cursor: pointer; padding-bottom: 12px; position: relative; }
         .m-tab.active { color: var(--morandi-blue); font-weight: 700; }
-        .m-tab.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
-            background: var(--morandi-blue); border-radius: 10px 10px 0 0;
-        }
+        .m-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--morandi-blue); border-radius: 10px; }
 
-        /* 內容區塊 */
         .content-section { display: none; padding: 15px 15px 150px; }
         .content-section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 天數切換 */
-        .day-scroller { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0 20px; scrollbar-width: none; }
-        .day-scroller::-webkit-scrollbar { display: none; }
-        .day-btn {
-            min-width: 60px; height: 60px; border-radius: 20px;
-            background: #fff; border: 1px solid var(--warm-gray);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; flex-shrink: 0; transition: 0.2s;
-        }
-        .day-btn.active { background: var(--morandi-blue); color: white; border-color: var(--morandi-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .day-btn b { font-size: 18px; }
+        .day-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .day-btn { min-width: 55px; height: 55px; border-radius: 15px; background: #fff; border: 1px solid var(--warm-gray); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .day-btn.active { background: var(--morandi-blue); color: white; border-color: var(--morandi-blue); }
 
         /* 景點卡片 */
-        .spot-card {
-            background: var(--card-bg); border-radius: 24px; padding: 22px; margin-bottom: 15px;
-            border: 1px solid rgba(224, 220, 217, 0.5); box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            position: relative;
-        }
-        .cat-badge { background: var(--morandi-blue); color: white; padding: 3px 10px; border-radius: 8px; font-size: 11px; margin-bottom: 10px; display: inline-block; }
-        .nav-trigger { position: absolute; top: 20px; right: 20px; color: var(--morandi-blue); font-size: 20px; cursor: pointer; }
+        .spot-card { background: #fff; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; position: relative; }
+        .nav-link { position: absolute; top: 20px; right: 20px; color: var(--morandi-blue); font-size: 18px; }
 
-        /* 截圖中的米色建議區 */
-        .daily-advice {
-            background: var(--accent-beige); border-radius: 30px 30px 0 30px; 
-            padding: 20px; margin-top: 20px; border: 1px solid rgba(0,0,0,0.05);
-        }
-        .advice-item { display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; }
-        .advice-item i { width: 20px; color: #726A5E; }
+        /* 底部建議區 */
+        .daily-advice { background: var(--accent-beige); border-radius: 25px; padding: 18px; margin-top: 20px; color: #665F55; }
 
-        /* ＋號按鈕 */
-        .fab {
-            position: fixed; bottom: 110px; right: 25px;
-            width: 58px; height: 58px; background: var(--morandi-blue);
-            color: white; border-radius: 50%; border: 4px solid #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            z-index: 2000; cursor: pointer; transition: 0.2s;
-        }
-        .fab:active { transform: scale(0.9); background: #7A96A6; }
+        /* 右下角新增按鈕 */
+        .fab { position: fixed; bottom: 100px; right: 25px; width: 55px; height: 55px; background: var(--morandi-blue); color: white; border-radius: 50%; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 1500; cursor: pointer; }
 
         /* 底部導覽 */
-        .bottom-nav {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 65px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            border-radius: 35px; display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000;
-        }
-        .nav-item { color: var(--text-light); font-size: 22px; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; height: 65px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
+        .nav-item { color: var(--text-light); font-size: 20px; }
         .nav-item.active { color: var(--morandi-blue); }
-
-        /* 指南與天氣樣式 */
-        .guide-card { background: #fff; border-radius: 24px; padding: 25px; line-height: 1.8; }
-        .weather-card { text-align: center; padding: 40px 0; background: #fff; border-radius: 24px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1 class="trip-title" contenteditable="true" id="app-title">胡志明市初遊</h1>
-        <div class="trip-date" contenteditable="true" id="app-date">2024.11.20 - 11.27</div>
+        <div class="header-top">
+            <div>
+                <h1 class="trip-title" contenteditable="true" id="app-title">胡志明市初遊</h1>
+                <div class="trip-date" contenteditable="true" id="app-date">2024.11.20 - 11.27</div>
+            </div>
+            <div class="share-btns">
+                <button class="btn-tool" onclick="exportTrip()" title="分享行程給朋友"><i class="fas fa-share-alt"></i></button>
+                <button class="btn-tool" onclick="importTrip()" title="匯入朋友的行程"><i class="fas fa-file-import"></i></button>
+            </div>
+        </div>
         
         <div class="main-tabs">
             <div class="m-tab active" id="tab-itinerary" onclick="switchTab('itinerary')">行程頁</div>
@@ -130,176 +84,141 @@
         </div>
     </header>
 
-    <!-- 行程頁面 -->
     <div id="itinerary-sec" class="content-section active">
         <div class="day-scroller" id="day-scroller"></div>
-        
-        <div id="day-content">
-            <div style="padding: 10px 5px;">
-                <h2 id="day-label" contenteditable="true" style="margin:0; font-size: 20px;">Day 1 西貢經典巡禮</h2>
-            </div>
-
-            <div id="spot-list">
-                <!-- 景點卡片載入 -->
-            </div>
-
-            <!-- 底部建議區 (米色) -->
-            <div class="daily-advice">
-                <div class="advice-item">
-                    <i class="fas fa-tshirt"></i>
-                    <span contenteditable="true" id="advice-outfit">建議穿著：棉麻材質、好走球鞋</span>
-                </div>
-                <div class="advice-item">
-                    <i class="fas fa-cloud-sun"></i>
-                    <span contenteditable="true" id="advice-weather">天氣提示：午後可能有短暫雷雨</span>
-                </div>
-            </div>
+        <div id="spot-list"></div>
+        <div class="daily-advice">
+            <div style="margin-bottom: 8px;"><i class="fas fa-tshirt"></i> <span contenteditable="true" id="sum-outfit">建議穿著</span></div>
+            <div><i class="fas fa-cloud-sun"></i> <span contenteditable="true" id="sum-weather">天氣提示</span></div>
         </div>
     </div>
 
-    <!-- 指南頁面 -->
     <div id="guide-sec" class="content-section">
-        <div class="guide-card">
-            <h3 contenteditable="true">📌 行前筆記</h3>
-            <p contenteditable="true">
-                1. 越南 E-visa 務必印出紙本。<br>
-                2. 下載 Grab 並綁好信用卡。<br>
-                3. 準備好腸胃藥與防蚊液。<br>
-                4. 推薦換匯：濱城市場周邊。
-            </p>
+        <div class="spot-card">
+            <h3 contenteditable="true">📌 旅行指南</h3>
+            <p contenteditable="true">這裡可以放共同編輯的注意事項...</p>
         </div>
     </div>
 
-    <!-- 天氣頁面 -->
     <div id="weather-sec" class="content-section">
-        <div class="weather-card">
-            <i class="fas fa-sun" style="font-size: 48px; color: #FFD27D;"></i>
-            <h2 style="font-size: 32px; margin: 15px 0;">32°C</h2>
+        <div class="spot-card" style="text-align:center;">
+            <i class="fas fa-sun" style="font-size:40px; color:#FFD27D;"></i>
+            <h2>32°C</h2>
             <p>胡志明市 · 今日晴朗</p>
-            <p style="font-size: 13px; color: var(--text-light);">降雨機率 10% | 濕度 70%</p>
         </div>
     </div>
 
-    <!-- ＋號按鈕 (增加行程) -->
-    <div class="fab" onclick="addNewSpot()">
-        <i class="fas fa-plus"></i>
-    </div>
+    <div class="fab" onclick="addNewSpot()"><i class="fas fa-plus"></i></div>
 
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('itinerary')"><i class="fas fa-calendar-alt"></i></div>
-        <div class="nav-item" onclick="switchTab('guide')"><i class="fas fa-book-open"></i></div>
-        <div class="nav-item" onclick="alert('收藏夾')"><i class="fas fa-heart"></i></div>
-        <div class="nav-item" onclick="alert('個人設定')"><i class="fas fa-user-circle"></i></div>
+        <div class="nav-item active"><i class="fas fa-map-marked-alt"></i></div>
+        <div class="nav-item"><i class="fas fa-book-open"></i></div>
+        <div class="nav-item"><i class="fas fa-heart"></i></div>
+        <div class="nav-item"><i class="fas fa-user-circle"></i></div>
     </nav>
 
     <script>
-        // 資料初始化 (Day 1 - Day 8)
-        let travelData = JSON.parse(localStorage.getItem('hcm_final_data')) || {
+        // 資料結構
+        let travelData = JSON.parse(localStorage.getItem('hcm_sync_data')) || {
             currentDay: 0,
             days: Array.from({length: 8}, (_, i) => ({
-                label: `Day ${i+1} 行程規劃`,
-                outfit: "建議穿著：輕便服飾",
-                weather: "天氣提示：晴朗",
-                spots: [
-                    { cat: "景點", name: "胡志明市中央郵局", desc: "法式建築經典", tips: "必拍大廳對稱景", parking: "隔壁街區有机車位" }
-                ]
+                label: `Day ${i+1} 行程`,
+                outfit: "棉麻材質",
+                weather: "晴朗",
+                spots: [{ name: "胡志明市中央郵局", cat: "景點", desc: "法式建築經典" }]
             }))
         };
+
+        // 【共享功能：匯出】
+        function exportTrip() {
+            save(); // 先儲存目前的編輯
+            const dataStr = JSON.stringify({
+                title: document.getElementById('app-title').innerText,
+                date: document.getElementById('app-date').innerText,
+                data: travelData
+            });
+            // 轉化為 Base64 代碼，方便傳輸
+            const code = btoa(unescape(encodeURIComponent(dataStr)));
+            
+            // 複製到剪貼簿
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = code;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            
+            alert("✅ 行程代碼已複製！\n請直接傳給 Line 好友，請他在 App 點擊匯入。");
+        }
+
+        // 【共享功能：匯入】
+        function importTrip() {
+            const code = prompt("請貼上朋友傳給你的行程代碼：");
+            if (!code) return;
+            try {
+                const decoded = JSON.parse(decodeURIComponent(escape(atob(code))));
+                if (confirm(`確定要匯入「${decoded.title}」嗎？這會覆蓋你目前的行程。`)) {
+                    document.getElementById('app-title').innerText = decoded.title;
+                    document.getElementById('app-date').innerText = decoded.date;
+                    travelData = decoded.data;
+                    save();
+                    location.reload(); // 重新整理頁面顯示新資料
+                }
+            } catch (e) {
+                alert("❌ 代碼錯誤，請確保代碼完整。");
+            }
+        }
 
         function init() {
             renderDayScroller();
             renderContent();
+            document.getElementById('app-title').innerText = localStorage.getItem('appTitle') || "胡志明市初遊";
+            document.getElementById('app-date').innerText = localStorage.getItem('appDate') || "2024.11.20 - 11.27";
         }
 
-        // 分頁切換功能 (解決點擊問題)
-        function switchTab(tabName) {
-            // 隱藏所有區塊
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            // 顯示目標區塊
-            document.getElementById(`${tabName}-sec`).classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            
-            // 底部導覽同步
-            if(tabName === 'itinerary') document.querySelector('.nav-item:nth-child(1)').classList.add('active');
-            if(tabName === 'guide') document.querySelector('.nav-item:nth-child(2)').classList.add('active');
-            
-            window.scrollTo(0,0);
-        }
-
-        // 渲染天數切換
         function renderDayScroller() {
-            const scroller = document.getElementById('day-scroller');
-            scroller.innerHTML = '';
+            const container = document.getElementById('day-scroller');
+            container.innerHTML = '';
             travelData.days.forEach((day, idx) => {
                 const btn = document.createElement('div');
                 btn.className = `day-btn ${travelData.currentDay === idx ? 'active' : ''}`;
                 btn.innerHTML = `<span>Day</span><b>${idx + 1}</b>`;
-                btn.onclick = () => {
-                    travelData.currentDay = idx;
-                    renderDayScroller();
-                    renderContent();
-                };
-                scroller.appendChild(btn);
+                btn.onclick = () => { travelData.currentDay = idx; renderDayScroller(); renderContent(); };
+                container.appendChild(btn);
             });
         }
 
-        // 渲染內容
         function renderContent() {
             const day = travelData.days[travelData.currentDay];
-            document.getElementById('day-label').innerText = day.label;
-            document.getElementById('advice-outfit').innerText = day.outfit;
-            document.getElementById('advice-weather').innerText = day.weather;
+            document.getElementById('sum-outfit').innerText = day.outfit;
+            document.getElementById('sum-weather').innerText = day.weather;
 
             const list = document.getElementById('spot-list');
-            list.innerHTML = '';
+            list.innerHTML = `<h2 style="font-size:18px; margin:10px 0;">${day.label}</h2>`;
             day.spots.forEach((spot, sIdx) => {
                 const card = document.createElement('div');
                 card.className = 'spot-card';
                 card.innerHTML = `
-                    <div class="nav-trigger" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}')">
-                        <i class="fas fa-location-arrow"></i>
-                    </div>
-                    <span class="cat-badge" contenteditable="true" onblur="updateSpot(${sIdx}, 'cat', this.innerText)">${spot.cat}</span>
-                    <h3 contenteditable="true" onblur="updateSpot(${sIdx}, 'name', this.innerText)" style="margin:0;">${spot.name}</h3>
-                    <p contenteditable="true" onblur="updateSpot(${sIdx}, 'desc', this.innerText)" style="font-size:14px; color:var(--text-light); margin:10px 0;">${spot.desc}</p>
-                    <div style="font-size:12px; color:var(--morandi-blue); background:#F8F9F9; padding:10px; border-radius:12px;">
-                        <b>拍照技巧：</b><span contenteditable="true" onblur="updateSpot(${sIdx}, 'tips', this.innerText)">${spot.tips}</span><br>
-                        <b>停車資訊：</b><span contenteditable="true" onblur="updateSpot(${sIdx}, 'parking', this.innerText)">${spot.parking}</span>
-                    </div>
-                    <i class="fas fa-trash" style="position:absolute; bottom:15px; right:20px; color:#eee; font-size:12px;" onclick="deleteSpot(${sIdx})"></i>
+                    <div class="nav-link" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${spot.name}')"><i class="fas fa-location-arrow"></i></div>
+                    <span style="background:var(--morandi-blue); color:#fff; font-size:10px; padding:2px 8px; border-radius:5px;">${spot.cat}</span>
+                    <h3 contenteditable="true" onblur="updateSpot(${sIdx}, 'name', this.innerText)">${spot.name}</h3>
+                    <p contenteditable="true" onblur="updateSpot(${sIdx}, 'desc', this.innerText)" style="font-size:13px; color:var(--text-light);">${spot.desc}</p>
                 `;
                 list.appendChild(card);
             });
-            save();
         }
 
-        // ＋號增加行程功能
+        function switchTab(tab) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}-sec`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
         function addNewSpot() {
-            // 確保回到行程分頁
-            switchTab('itinerary');
-            
-            const newSpot = {
-                cat: "新分類",
-                name: "新景點名稱",
-                desc: "點擊編輯景點描述...",
-                tips: "輸入拍照撇步",
-                parking: "輸入交通建議"
-            };
-            travelData.days[travelData.currentDay].spots.push(newSpot);
+            travelData.days[travelData.currentDay].spots.push({ name: "新景點", cat: "分類", desc: "編輯描述" });
             renderContent();
-            
-            // 自動滾動到最下方
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        function deleteSpot(idx) {
-            if(confirm('確定刪除此項目？')) {
-                travelData.days[travelData.currentDay].spots.splice(idx, 1);
-                renderContent();
-            }
+            save();
         }
 
         function updateSpot(idx, key, val) {
@@ -308,13 +227,16 @@
         }
 
         function save() {
-            localStorage.setItem('hcm_final_data', JSON.stringify(travelData));
+            localStorage.setItem('hcm_sync_data', JSON.stringify(travelData));
+            localStorage.setItem('appTitle', document.getElementById('app-title').innerText);
+            localStorage.setItem('appDate', document.getElementById('app-date').innerText);
         }
 
-        // 監聽基本欄位
-        document.getElementById('day-label').onblur = function() { travelData.days[travelData.currentDay].label = this.innerText; save(); renderDayScroller(); };
-        document.getElementById('advice-outfit').onblur = function() { travelData.days[travelData.currentDay].outfit = this.innerText; save(); };
-        document.getElementById('advice-weather').onblur = function() { travelData.days[travelData.currentDay].weather = this.innerText; save(); };
+        // 監聽基本資訊變動
+        document.getElementById('app-title').onblur = save;
+        document.getElementById('app-date').onblur = save;
+        document.getElementById('sum-outfit').onblur = function() { travelData.days[travelData.currentDay].outfit = this.innerText; save(); };
+        document.getElementById('sum-weather').onblur = function() { travelData.days[travelData.currentDay].weather = this.innerText; save(); };
 
         init();
     </script>

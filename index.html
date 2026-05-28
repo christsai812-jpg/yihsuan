@@ -20,6 +20,7 @@
             --text-main: #555E64;
             --text-light: #8E979C;
             --card-bg: #FFFFFF;
+            --danger-red: #E29792;
         }
 
         * {
@@ -37,7 +38,6 @@
             overflow-x: hidden;
         }
 
-        /* Header 樣式 */
         header {
             padding: 50px 25px 15px;
             background: linear-gradient(180deg, #FFFFFF 0%, rgba(249, 249, 249, 0) 100%);
@@ -61,7 +61,6 @@
             font-weight: 500;
         }
 
-        /* Tabs 頂部標籤樣式 */
         .tabs-container {
             display: flex;
             padding: 0 25px;
@@ -93,7 +92,6 @@
             border-radius: 10px;
         }
 
-        /* 主內容頁面區塊 */
         .page-content {
             display: none;
             animation: fadeIn 0.4s ease-out;
@@ -103,7 +101,6 @@
             display: block;
         }
 
-        /* 子內容區塊 (行程/指南/天氣) */
         .content-section {
             padding: 0 20px 100px;
             display: none;
@@ -119,7 +116,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 日式圓角卡片 */
         .card {
             background: var(--card-bg);
             border-radius: 24px;
@@ -132,7 +128,8 @@
         .itinerary-item {
             display: flex;
             gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
         }
 
         .time-node {
@@ -146,6 +143,14 @@
             font-weight: 700;
             color: var(--morandi-blue);
             font-size: 14px;
+            outline: none;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .time:focus, .spot-title:focus, .spot-desc:focus {
+            background-color: var(--snow-white);
+            border-bottom: 2px solid var(--morandi-blue);
         }
 
         .line {
@@ -155,19 +160,61 @@
             margin: 5px 0;
         }
 
-        .spot-info h3 {
+        .spot-info {
+            flex-grow: 1;
+        }
+
+        .spot-title {
             margin: 0;
             font-size: 16px;
             color: var(--text-main);
+            outline: none;
+            display: inline-block;
+            width: 100%;
         }
 
-        .spot-info p {
+        .spot-desc {
             margin: 5px 0 0;
             font-size: 13px;
             color: var(--text-light);
+            outline: none;
+            display: inline-block;
+            width: 100%;
         }
 
-        /* 指南標籤 */
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--danger-red);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            opacity: 0.6;
+        }
+        
+        .btn-delete:hover {
+            opacity: 1;
+        }
+
+        .btn-add-item {
+            width: 100%;
+            background: transparent;
+            border: 2px dashed var(--morandi-blue);
+            color: var(--morandi-blue);
+            padding: 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            transition: 0.2s;
+        }
+
+        .btn-add-item:active {
+            background: rgba(147, 169, 181, 0.1);
+        }
+
         .guide-tag {
             display: inline-block;
             padding: 4px 12px;
@@ -180,7 +227,6 @@
             border: 1px solid var(--warm-gray);
         }
 
-        /* 底部導覽條 */
         .bottom-nav {
             position: fixed;
             bottom: 25px;
@@ -222,7 +268,6 @@
             font-weight: 500;
         }
 
-        /* 天氣小部件 */
         .weather-widget {
             text-align: center;
             padding: 30px 0;
@@ -234,7 +279,6 @@
             color: var(--morandi-blue);
         }
         
-        /* 地圖佔位符樣式 */
         .map-placeholder {
             height: 300px;
             background: #eaeaea;
@@ -252,8 +296,8 @@
 
     <div id="page-explore" class="page-content active">
         <header>
-            <h1 class="trip-title">胡志明市初遊</h1>
-            <div class="trip-date">2024.11.20 - 11.24 · 5 Days</div>
+            <h1 class="trip-title" contenteditable="true" onblur="saveItinerary()">胡志明市初遊</h1>
+            <div class="trip-date" contenteditable="true" onblur="saveItinerary()">2024.11.20 - 11.24 · 5 Days</div>
         </header>
 
         <div class="tabs-container">
@@ -263,41 +307,16 @@
         </div>
 
         <div id="itinerary" class="content-section active">
-            <div class="card">
-                <div class="itinerary-item">
-                    <div class="time-node">
-                        <span class="time">09:00</span>
-                        <div class="line"></div>
-                    </div>
-                    <div class="spot-info">
-                        <h3>新山一機場抵達</h3>
-                        <p>領取 SIM 卡、更換越南盾</p>
-                    </div>
+            <div class="card" id="itinerary-list">
                 </div>
-                <div class="itinerary-item">
-                    <div class="time-node">
-                        <span class="time">11:30</span>
-                        <div class="line"></div>
-                    </div>
-                    <div class="spot-info">
-                        <h3>咖啡公寓 (The Cafe Apartments)</h3>
-                        <p>挑選一間文青咖啡館午餐，享受西貢午後</p>
-                    </div>
-                </div>
-                <div class="itinerary-item">
-                    <div class="time-node">
-                        <span class="time">15:00</span>
-                    </div>
-                    <div class="spot-info">
-                        <h3>胡志明市中心郵局</h3>
-                        <p>法式殖民風格建築，寄出一張明信片</p>
-                    </div>
-                </div>
-            </div>
             
-            <div class="card" style="border-left: 4px solid var(--morandi-blue);">
+            <button class="btn-add-item" onclick="addItineraryItem()">
+                <i class="fas fa-plus"></i> 新增景點行程
+            </button>
+            
+            <div class="card" style="border-left: 4px solid var(--morandi-blue); margin-top: 20px;">
                 <h3>💡 小提醒</h3>
-                <p style="font-size: 14px; margin: 0;">市區移動建議使用 Grab，安全且價格透明。</p>
+                <p style="font-size: 14px; margin: 0;">點擊上方任何標題、時間、內容，都可以直接打字修改喔！修改後會自動儲存。</p>
             </div>
         </div>
 
@@ -330,7 +349,6 @@
     <div id="page-map" class="page-content" style="padding: 60px 20px;">
         <div class="card">
             <h3>🗺️ 景點地圖分佈</h3>
-            <p>這裡未來可以自由串接 Google Maps API。目前規劃包含第一郡核心景點標記。</p>
             <div class="map-placeholder">
                 <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i> 地圖模組載入中...
             </div>
@@ -340,7 +358,7 @@
     <div id="page-favorites" class="page-content" style="padding: 60px 20px;">
         <div class="card">
             <h3>❤️ 我的收藏景點</h3>
-            <p style="color: var(--text-light);">目前尚未收藏任何景點。點擊景點旁的愛心即可同步至此！</p>
+            <p style="color: var(--text-light);">目前尚未收藏任何景點。</p>
         </div>
     </div>
 
@@ -348,11 +366,9 @@
         <div class="card" style="text-align: center;">
             <i class="fas fa-user-circle" style="font-size: 60px; color: var(--morandi-blue); margin-bottom: 10px;"></i>
             <h3>旅行者帳戶</h3>
-            <p style="font-size: 14px; color: var(--text-light);">saigon.traveler@email.com</p>
-        </div>
-        <div class="card">
-            <h4 style="margin-top:0;">系統設定</h4>
-            <p style="font-size:14px; color: var(--text-light);">離線地圖下載 · 清除快取 · 登出</p>
+            <button onclick="clearStorage()" style="background:var(--danger-red); border:none; color:white; padding:8px 15px; border-radius:10px; font-family:inherit; cursor:pointer; margin-top:10px;">
+                重設所有行程資料
+            </button>
         </div>
     </div>
 
@@ -376,21 +392,106 @@
     </nav>
 
     <script>
-        // 觸發手機輕微震動回饋
+        // 預設行程資料
+        const defaultItinerary = [
+            { time: "09:00", title: "新山一機場抵達", desc: "領取 SIM 卡、更換越南盾" },
+            { time: "11:30", title: "咖啡公寓 (The Cafe Apartments)", desc: "挑選一間文青咖啡館午餐，享受西貢午後" },
+            { time: "15:00", title: "胡志明市中心郵局", desc: "法式殖民風格建築，寄出一張明信片" }
+        ];
+
+        // 初始化：從本地儲存讀取資料，如果沒有就用預設的
+        let itineraryData = JSON.parse(localStorage.getItem('my_itinerary')) || defaultItinerary;
+
+        function renderItinerary() {
+            const listContainer = document.getElementById('itinerary-list');
+            listContainer.innerHTML = '';
+
+            if(itineraryData.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color:var(--text-light);">目前沒有行程，請點擊下方按鈕新增！</p>';
+                return;
+            }
+
+            itineraryData.forEach((item, index) => {
+                const itemHtml = `
+                    <div class="itinerary-item">
+                        <div class="time-node">
+                            <span class="time" contenteditable="true" onblur="updateData(${index}, 'time', this.innerText)">${item.time}</span>
+                            <div class="line"></div>
+                        </div>
+                        <div class="spot-info">
+                            <h3 class="spot-title" contenteditable="true" onblur="updateData(${index}, 'title', this.innerText)">${item.title}</h3>
+                            <p class="spot-desc" contenteditable="true" onblur="updateData(${index}, 'desc', this.innerText)">${item.desc}</p>
+                        </div>
+                        <button class="btn-delete" onclick="deleteItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        }
+
+        // 更新特定欄位資料並存檔
+        function updateData(index, field, value) {
+            itineraryData[index][field] = value.trim();
+            localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
+        }
+
+        // 新增行程
+        function addItineraryItem() {
+            itineraryData.push({ time: "12:00", title: "新行程景點", desc: "請點擊文字直接修改內容" });
+            localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
+            renderItinerary();
+            triggerHaptic();
+        }
+
+        // 刪除行程
+        function deleteItem(index) {
+            if(confirm("確定要刪除這個行程嗎？")) {
+                itineraryData.splice(index, 1);
+                localStorage.setItem('my_itinerary', JSON.stringify(itineraryData));
+                renderItinerary();
+                triggerHaptic();
+            }
+        }
+
+        // 儲存標題和日期
+        function saveItinerary() {
+            const title = document.querySelector('.trip-title').innerText;
+            const date = document.querySelector('.trip-date').innerText;
+            localStorage.setItem('my_trip_title', title);
+            localStorage.setItem('my_trip_date', date);
+        }
+
+        // 載入標題和日期
+        function loadTripInfo() {
+            if(localStorage.getItem('my_trip_title')) {
+                document.querySelector('.trip-title').innerText = localStorage.getItem('my_trip_title');
+            }
+            if(localStorage.getItem('my_trip_date')) {
+                document.querySelector('.trip-date').innerText = localStorage.getItem('my_trip_date');
+            }
+        }
+
+        // 清除所有紀錄重設
+        function clearStorage() {
+            if(confirm("確定要清除所有修改，還原成最初的預設行程嗎？")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // 輕微震動
         function triggerHaptic() {
             if (window.navigator && window.navigator.vibrate) {
                 window.navigator.vibrate(10);
             }
         }
 
-        // 頂部 Tabs 切換 (行程 / 指南 / 天氣)
+        // 基礎分頁切換邏輯
         function switchTab(event, tabId) {
-            // 切換 Tab 按鈕的 active 樣式
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => tab.classList.remove('active'));
             event.currentTarget.classList.add('active');
 
-            // 切換對應的內容區塊
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => section.classList.remove('active'));
             
@@ -398,20 +499,6 @@
             triggerHaptic();
         }
 
-        // 底部導覽列頁面切換 (地圖 / 景點 / 收藏 / 我的)
         function switchPage(event, pageId) {
-            // 切換導覽列圖示高亮樣式
             const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            // 切換主頁面顯示
-            const pages = document.querySelectorAll('.page-content');
-            pages.forEach(page => page.classList.remove('active'));
-            
-            document.getElementById(pageId).classList.add('active');
-            triggerHaptic();
-        }
-    </script>
-</body>
-</html>
+            navItems.forEach(item => item.
